@@ -1,5 +1,5 @@
 
-from datetime import date
+# cd C:\Program Files\Google\Chrome\Application && chrome.exe -remote-debugging-port=9014 --user-data-dir="C:\test\Chorme_Test_profile"
 import time
 
 from selenium import webdriver
@@ -20,10 +20,20 @@ options.add_argument("--no-sandbox")
 options.add_argument("--disable-setuid-sandbox")
 
 driver = webdriver.Chrome(executable_path="C:\selenium\chromedriver_win32\chromedriver.exe", options=options)
-# driver.get("https://www.linkedin.com/talent/inbox/0/main/id/2-MzgwNDQyNTItNWE1ZS00YjA0LThlY2ItNWI5NTcwZWFhMWE1XzAxMg==?filter=declined")
+driver.get("https://www.linkedin.com/talent/inbox/0/main/id/2-NzdlYzRhYWItMTZlZC00ZDdjLTk4MzktOTk1OWM1Y2RiYWM3XzAxMg==?filter=declined")
 print(driver.title)
 
-f = codecs.open('C:/Users/affin/OneDrive/Desktop/Automation/Free Paid Segrigation/extract.csv', 'a', 'utf-8')
+f = codecs.open('C:/Users/affin/OneDrive/Desktop/JatinHarshal/data.csv', 'r+', 'utf-8')
+data=f.readlines()
+if(len(data)>2):
+    f.truncate()
+
+    f.seek(0)
+    data.pop(0)
+    data.pop(0)
+    data.pop(0)
+
+f.write("Name,Link,Tag,Sender's_name,Date,Time,Msg\n\n\n")
 
 time.sleep(2)
 
@@ -67,27 +77,31 @@ def profile_link():
     return profile_link
 monthDict={'January':1, 'Febraury':2, 'March':3, 'April':4, 'May':5, 'June':6, 'July':7, 'August':8, 'September':9, 'October':10,'November':11,'December':12}
 # ----------------------------------------------------------
-def ext_recent():
+def ext_recent(xx):
     print("in check")
-    f = codecs.open("C:/Users/affin/OneDrive/Desktop/Automation/Free Paid Segrigation/extract.csv", 'r+', "utf-8")
-    # x = len(f.readlines())
-    xx = f.readlines()
-    # flag=0
-    
-    if(xx):
+    # f = codecs.open('C:/Users/affin/OneDrive/Desktop/JatinHarshal/data.csv', 'r+', "utf-8")
+    # # x = len(f.readlines())
+    # xx = f.readlines()
+    # # flag=0
+
+
+    print(len(xx))
+    y  = 3
+    if len(xx):
         for i in range(3, len(xx)):
             print(i)    
             if xx[i] == "\n":
                 print("Entereed line")
                 # print(xx[i-1])
                 y = i-1
+                print(xx[y])
+                print("y  :", y)
                 break
-            # else:
-            #     print("file is empty")
-            #     flag=1
+     
+        print("y  :", y)
         y=xx[y]    
+        print(y)
         y = y.split('"')
-        # print(y)
         print(y[3],y[5])
         var=y[3].split(" ")
         
@@ -109,16 +123,17 @@ def ext_recent():
         return int(var[1]),int(var[2]),int(var[3]),y[5]
     else:
         print("file is empty")
+
+
+
+
+
+
+
+
         return (None,None,None,None)
 # ----------------------------------------------------------
-def seek_to():
-    s = codecs.open("C:/Users/affin/OneDrive/Desktop/Automation/Free Paid Segrigation/extract.csv", 'r+', "utf-8")
-    s.readline()
-    s.readline()
-    s.readline()
-    s.seek(1)
-    
-    return s
+
     
 def check(mon,dayy,yearr,timee):
 
@@ -191,37 +206,48 @@ def check(mon,dayy,yearr,timee):
     else:
         print("in date condition returning false ")
         return False    
-    #  time.sleep(2)
+
+
+
+
+def save_into_csv(newdata):
+    s = codecs.open('C:/Users/affin/OneDrive/Desktop/JatinHarshal/data.csv', 'a', 'utf-8')
+
+    data = s.readlines()
+
+    # strrr = "Hello World"
+
+    # data.insert(0, newdata)
+    # print(data)
+    # s.seek(0)
+
+    # to erase all data 
+    s.truncate() 
     
-    
-    # f.write(strr)
-    # f.write('"')
-    # f.write(md)
-    # f.write('"')
-    # f.write('\n')
+    # fun()
+
+    for i in data:
+        s.write(i)
+
+
+
+
 
 
 
 # Extracting messages.......
 # ----------------------------------------------------------
 def chat_work(chat_name, indexx):
-    f.write('\n')
+
+    current_data = []
+
+    newstring = ""
+
+
+    # f.write('\n')
     p_link =  profile_link()
 
     driver.implicitly_wait(5)
-
-    f.write(str(indexx))
-    f.write(',')
-
-    f.write('"')
-    f.write(chat_name)
-    f.write('"')
-    f.write(',')
-    f.write('"')
-    f.write(p_link)
-    f.write('"')
-    f.write(',')
-
 
     chat_panel = "/html/body/div[3]/div[5]/div/div[2]/div[1]/div[3]/div[1]/div[2]/div[1]/ul"
     panel_element = driver.find_element(By.XPATH, chat_panel)
@@ -239,8 +265,7 @@ def chat_work(chat_name, indexx):
         li_2 = "_message-reply-status_1gj1uc"
         li2_ele =  panel_element.find_element(By.CLASS_NAME, li_2)
         tag = li2_ele.text
-        f.write(tag)
-        f.write(",")
+ 
     except :
         print("\n exception in acc/rej tag\n ")
 
@@ -248,17 +273,15 @@ def chat_work(chat_name, indexx):
     iterator=0
 
     for i in l_elements:
+        newstring = ""
+
         iterator += 1
    
-        if(iterator != 1):
-            f.write(" ")
-            f.write(',')
-            f.write(' ')
-            f.write(',')
-            f.write(' ')
-            f.write(',')
-            f.write(' ')
-            f.write(',')
+        if(iterator == 1):    
+            newstring +=   '"' +chat_name + '"' + "," + '"' + p_link  + '"' + "," + '"' + tag  + '"' + ","
+        else:
+            newstring +=  ",,,"
+
 
         time.sleep(1)
         try:
@@ -306,26 +329,32 @@ def chat_work(chat_name, indexx):
 
         # print(md) 
         # print("Strrr : ", strr)
-        f.write(strr)
-        f.write('"')
-        f.write(md)
-        f.write('"')
-        f.write('\n')
+
+        newstring += strr  + '"' + md +'"' + "\n"
+
+        print("\n\n\n" , newstring , "\n\n")
+
+        f.write(newstring)
+    f.write("\n")
+        # f.write("\n\n")
+    
+
+
 
 # ----------------------------------------------------------
 
 
-mon, dayy,yearr,timee  = ext_recent()
+mon, dayy,yearr,timee  = ext_recent(data)
 print("m,d,t,e",mon,dayy,yearr,timee)
-print(ext_recent())
+# print(ext_recent(data))
 # print(var)
 # looping through all li's
 # ----------------------------------------------------------
 ul_path = "/html/body/div[3]/div[5]/div/div[2]/div[1]/div[2]/div[2]/ul/li"
 ul_list = driver.find_elements(By.XPATH, ul_path)
 
-flagger = 9
-counter = 9
+flagger = 0
+counter = 0
 
 try : 
     filter_tag = "_filter-wrapper_19domm"
@@ -340,13 +369,15 @@ except Exception as e:
 
 
 while True:
-
+    # newstring = ""
     counter += 1
     flagger += 1
 
     print(value)
-    try:
+    time.sleep(3)
+    try : 
         pp = "/html/body/div[3]/div[5]/div/div[2]/div[1]/div[2]/div[" + str(value) + "]/ul/li[" + str(counter) + "]/div/div/div/div[2]/div[1]/a/p"
+            #   /html/body/div[3]/div[5]/div/div[2]/div[1]/div[2]/div[3                 ]/ul/li[                   1]/div/div/div/div[2]/div[1]/a/p
 
         pp_ele =WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, pp)))
@@ -369,12 +400,20 @@ while True:
             if(var==True):
                 print("returned true")
                 
+
                 chat_work(chat_name, counter)
+                
+
+                print("hha hhaa mai chal raha hu")
+
                 time.sleep(3)
                 driver.execute_script("arguments[0].scrollIntoView();", element)   
             else:
                 print("done")
-        
+                if(len(data)>3):
+                    for i in data:
+                        f.write(i)
+            
                 break
         else:
             print("file is empty running full")
@@ -384,14 +423,14 @@ while True:
                     
     except Exception as e:    
         print("\n\tException in listtttt\n", e)
-    #     time.sleep(2)
-    #     try:
-    #         show_more="/html/body/div[3]/div[5]/div/div[2]/div[1]/div[2]/div[2]/div/button"
-    #         show_more_ele=driver.find_element(By.XPATH,show_more)
-    #         show_more_ele.click()
-    #         time.sleep(2)
-    #     except Exception as e:
-    #         print("Exception in Show more : ", e)
-    #     flagger -= 1
-    #     counter -= 1  
-    #     driver.execute_script("arguments[0].scrollIntoView();", element)  
+        time.sleep(2)
+        try:
+            show_more="/html/body/div[3]/div[5]/div/div[2]/div[1]/div[2]/div[2]/div/button"
+            show_more_ele=driver.find_element(By.XPATH,show_more)
+            show_more_ele.click()
+            time.sleep(2)
+        except Exception as e:
+            print("Exception in Show more : ", e)
+        flagger -= 1
+        counter -= 1  
+        driver.execute_script("arguments[0].scrollIntoView();", element)  
