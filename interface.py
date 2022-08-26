@@ -1,7 +1,11 @@
 
+
 import time
+from itertools import count
+
 from tkinter import *
-import csv
+
+
 from selenium import webdriver
 
 from selenium.webdriver.common.by import By
@@ -18,57 +22,18 @@ options.add_argument("--no-sandbox")
 options.add_argument("--disable-setuid-sandbox")
 
 
+free_counter = 0
+
+driver = webdriver.Chrome(executable_path="C:\selenium\chromedriver_win32\chromedriver.exe", options=options)
+print(driver.title)
+
 root = Tk()
 root.title("Free Paid Segregation System")
 
 root.resizable(0,0)
 root.configure(background='black')
 
-link = "" 
-free_project_name = ""
-#create submit function for the database...
-def submit():
-    link = a.get()
-    # print(aa)
-    free_project_name = b.get()
-    # print(bb)
 
-    
-
-
-#create text boxes
-a = Entry(root, width = 30, borderwidth=0)
-a.grid(row=0, column=1, padx=40, pady=(15, 0))
-
-b = Entry(root, width = 30, borderwidth=0)
-b.grid(row=1, column=1, pady=(5, 0))
-
-# create text box label 
-a_label = Label(root, text="Project Link", bg="black", fg="white")
-a_label.grid(row=0, column=0, pady=(20, 5))
-
-b_label = Label(root, text="Free Project Name" , bg="black", fg="white")
-b_label.grid(row=1, column=0, pady=(10, 10), padx=(34, 0))
-
-
- 
-
-#create submit button
-submit_btn = Button(root, text="Start Automation", command=submit, pady=3, padx=15, bg="white")
-submit_btn.grid(row=6, column=0, columnspan=2, padx=20, pady=20, ipadx=100)
-
-
-
-
-
-print("LINK : ", link)
-print("PROJECT NAME : ", free_project_name)
-
-free_counter = 0
-
-
-driver = webdriver.Chrome(executable_path="C:\selenium\chromedriver_win32\chromedriver.exe", options=options)
-print(driver.title)
 
 
 
@@ -122,13 +87,14 @@ def inmail_list_fun():
     check_box_ele.click()
 
 
+
     return inmail_list
 
 temp_list= []
 
 
 # # looping into all Li presents...
-def saving_to_next(inmail_list,free_project, limit):
+def saving_to_next(inmail_list,free_project):
     global  free_counter
     free_counter=0
 
@@ -219,9 +185,9 @@ def saving_to_next(inmail_list,free_project, limit):
                 time.sleep(3)
 
 
-                if(free_counter==limit):
-                    variablee = 100
-                    break
+                # if(free_counter==limit):
+                #     variablee = 100
+                #     break
               
             else:
                 print("NOT FREE")
@@ -277,27 +243,74 @@ def add_note_fun():
 
 
 # --------------------main---------------------------
-driver.implicitly_wait(5)
-time.sleep(2)
+def fun_main():
+	
+	linkk = a.get()
+	free = b.get()
+
+
+	print("link",linkk,"free",free)
+
+
+	driver.implicitly_wait(5)
+	time.sleep(2)
+
+
+	try : 
+		driver.get(linkk)
+	except Exception as e:
+		print(e)
+	free_project=free
+	print("LINK : ", linkk)
+	print("PROJECT NAME : ", free)
+	
+	while True:    
+		flag=0
+
+		time.sleep(3)
+		free_list = inmail_list_fun()
+		
+
+		if(len(free_list)!=0 ):
+			flag =saving_to_next(free_list,free_project)
+		if(flag!=100):
+			add_note_fun()
+		if flag == 1 or flag == 100:
+			print("DONNNNNEEEEE")
+			break
 
 
 
-# driver.get(link)  
 
 
-while True:  
-    flag=0
 
-    time.sleep(3)
-    free_list = inmail_list_fun()
 
-    if(len(free_list)!=0 ):
-        flag =saving_to_next(free_list,free_project_name)
-    if(flag!=100):
-        add_note_fun()
-    if flag == 1 or flag == 100:
-        print("DONNNNNEEEEE")
-        break
+#create text boxes
+a = Entry(root, width = 30, borderwidth=0)
+a.grid(row=0, column=1, padx=40, pady=(15, 0))
+
+b = Entry(root, width = 30, borderwidth=0)
+b.grid(row=1, column=1, pady=(5, 0))
+
+
+
+
+
+# create text box label 
+a_label = Label(root, text="Project Link", bg="black", fg="white")
+a_label.grid(row=0, column=0, pady=(20, 5))
+
+b_label = Label(root, text="Free Project Name" , bg="black", fg="white")
+b_label.grid(row=1, column=0, pady=(10, 10), padx=(34, 0))
+
+print("--------------------------------------")
+print("--------------------------------------")
+ 
+
+
+#create submit button
+submit_btn = Button(root, text="Start Automation", command=fun_main, pady=3, padx=15, bg="white")
+submit_btn.grid(row=6, column=0, columnspan=2, padx=20, pady=20, ipadx=100)
 
 
 
