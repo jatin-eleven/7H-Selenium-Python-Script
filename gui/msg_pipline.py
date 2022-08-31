@@ -1,5 +1,7 @@
 
 
+
+
 from re import template
 import time
 import csv
@@ -28,35 +30,50 @@ free_counter = 0
 driver = webdriver.Chrome(executable_path="C:\selenium\chromedriver_win32\chromedriver.exe", options=options)
 
 
+
 def check_for_paid():
     view_btn = "inmail-component__button--tertiary"
-    view_btn_element = driver.find_element(By.CLASS_NAME, view_btn)
+    print("view button clicked")
+    # view_btn_element = driver.find_element(By.CLASS_NAME, view_btn)
+    view_btn_element= WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, view_btn)))
     view_btn_element.click()
     paid_list = []
  
     try:
-        inmail_paid = "/html/body/div[4]/div[6]/base-slidein-container/div/div/div[2]/div/form/div[2]/div[1]/div[1]/section/dl/dd[2]"
-        inmail_element_paid = driver.find_element(By.XPATH, inmail_paid)
-        var = inmail_element_paid.find_elements(
-        By.CLASS_NAME, "compose-recipients__msg-to-list-item")
-        time.sleep(1)    
-        for k in var:
-            paid_list.append(k.text)
+        inmail_paid = "/html/body/div[4]/div[6]/base-slidein-container/div/div/div[2]/div/form[2]/div[2]/div[1]/div[1]/section/dl[1]/dd/ul"
+        # inmail_element_paid = driver.find_element(By.XPATH, inmail_paid)
+        inmail_element_paid= WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, inmail_paid)))
+            
+
     except:
-        print("no Paid in mail found")    
-        
+        print("no Paid in mail found")  
+
+
+
+    var=WebDriverWait(inmail_element_paid , 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "compose-recipients__msg-to-list-item"))) 
+    print(len(var))
+    for k in  range(len(var)):
+        print("got elements")
+
+        x = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "compose-recipients__remove-recipient-btn")))
+        try:
+            x.click()
+        except  Exception as e:
+            print("Exc in clicking", e)
     print(paid_list)
     return paid_list
+
+
 
 # Select All Button...
 def send_msg_fun(template_name):
     search_isempty=0
-    driver.implicitly_wait(5)
-    time.sleep(3)
+    # driver.implicitly_wait(5)
+    # time.sleep(3)
     try:
         check_box = "profile-list__select-all"
 
-        check_box_ele = driver.find_element(By.CLASS_NAME, check_box)
+        check_box_ele =  WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, check_box)))
         check_box_ele.click()
     except:
         search_isempty = 1
@@ -64,10 +81,10 @@ def send_msg_fun(template_name):
 
 
     # # Message Button...
-    msg_btn = "/html/body/div[4]/div[5]/div/div[2]/section/div[3]/div/div/div[1]/div/section/div/div/div/div[1]/div/span/div/form/div/div/div[1]/div/div/div/div/div/div/div/div/div/div/ul/li[2]/button/span"
-                       
-
-    msg_btn_element = driver.find_element(By.XPATH, msg_btn)
+    msg_btn = "/html/body/div[4]/div[5]/div/div[2]/section/div[3]/div/div/div[1]/div/section/div/div/div/div[1]/div/span/div/form/div/div/div[1]/div/div/div/div/div/div/div/div/div/div/ul/li[2]/button/span/span[1]"
+            
+    # msg_btn_element = driver.find_element(By.XPATH, msg_btn)
+    msg_btn_element= WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, msg_btn)))
     msg_btn_element.click()
     
     flag = check_for_paid()
@@ -78,7 +95,8 @@ def send_msg_fun(template_name):
     else:
         input_path = "/html/body/div[4]/div[6]/base-slidein-container/div/div/div[2]/div/div/div/div[1]/div[1]/div/input"
 
-        input_element = driver.find_element(By.XPATH, input_path)
+        # input_element = driver.find_element(By.XPATH, input_path)
+        input_element= WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, input_path)))
         input_element.send_keys(template_name)
 
 
@@ -87,9 +105,11 @@ def send_msg_fun(template_name):
 
 
         form_path = "/html/body/div[4]/div[6]/base-slidein-container/div/div/div[2]/div/div/div/div[1]/ul/form"
-        form_element = driver.find_element(By.XPATH,form_path)
+        # form_element = driver.find_element(By.XPATH,form_path)
+        form_element=WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, form_path)))
         uls_path = "/html/body/div[4]/div[6]/base-slidein-container/div/div/div[2]/div/div/div/div[1]/ul/form/div/ul"
-        uls_count = form_element.find_elements(By.XPATH, uls_path)
+        # uls_count = form_element.find_elements(By.XPATH, uls_path)
+        uls_count=WebDriverWait(form_element, 10).until(EC.presence_of_all_elements_located((By.XPATH, uls_path)))
 
         print("length of ul : ", len(uls_count))
 
@@ -97,9 +117,11 @@ def send_msg_fun(template_name):
             flag = 0
             try:
                 li_path = "/html/body/div[4]/div[6]/base-slidein-container/div/div/div[2]/div/div/div/div[1]/ul/form/div/ul[" + str(i) + "]/li"
-                li_count = driver.find_element(By.XPATH, li_path)
+                # li_count = driver.find_element(By.XPATH, li_path)
+                li_count=WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, li_path)))
                 div_path= "/html/body/div[4]/div[6]/base-slidein-container/div/div/div[2]/div/div/div/div[1]/ul/form/div/ul[" + str(i) + "]/li/li/div[1]"
-                div_element= driver.find_elements(By.XPATH, div_path)
+                # div_element= driver.find_elements(By.XPATH, div_path)
+                div_element=WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.XPATH, div_path)))
                 for element in enumerate(div_element):
                     # print("elemts ka text : ",element[1].text)
                     if element[1].text.lower() == template_name.lower():
@@ -116,16 +138,17 @@ def send_msg_fun(template_name):
                 print("Exception in loop : ", e)
             time.sleep(1)
 
-        send_msg = "/html/body/div[4]/div[6]/base-slidein-container/div/div/div[2]/div/form/section/div[2]/div/button/span[2]"
+        # send_msg = "/html/body/div[4]/div[6]/base-slidein-container/div/div/div[2]/div/form/section/div[2]/div/button/span[2]"
+        #             # /html/body/div[4]/div[6]/base-slidein-container/div/div/div[2]/div/form/section/div[2]/div/button/span[2]
                  
-        send_msg_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, send_msg)))
-        send_msg_element.click()
-        time.sleep(2)
+        # send_msg_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, send_msg)))
+        # send_msg_element.click()
+        # time.sleep(1)
     return search_isempty
     
            
 def change_state_fun():
-    time.sleep(3)
+    # time.sleep(3)
    
 
 
@@ -142,28 +165,29 @@ def change_state_fun():
 
 def fun_main():
   
-    linkk=a.get()
+    # linkk=a.get()
     templatee=b.get()
-
+    linkk = a.get()
 
     driver.get(linkk)
     print(driver.title)
 
     driver.implicitly_wait(10)
-    time.sleep(3)
+    # time.sleep(3)
     rows = []
  
     while True:    
         flag=0
         flag=send_msg_fun(templatee)
-        try : 
+        # try : 
             # cancel_btn = "/html/body/div[4]/div[6]/base-slidein-container/div/div/div[1]/button/li-icon"
                        
             # cancel_btn_element = driver.find_element(By.XPATH, cancel_btn)
+            # cancel_btn_element=WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, cancel_btn)))
             # print("cancel button clicked")
             # cancel_btn_element.click()
-        except Exception as e:
-            print("Exce in while : ", e)
+        # except Exception as e:
+        #     print("Exce in while : ", e)
 
         if(flag):
             print("condition broke")
